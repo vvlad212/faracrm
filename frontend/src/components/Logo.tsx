@@ -6,7 +6,7 @@ import {
 /**
  * Логотип в шапке CRM.
  * Если в Company задан logo_id — выводится этот файл.
- * Иначе — встроенный SVG fallback (FARA).
+ * Иначе — встроенный SVG fallback (BuildCRM).
  */
 const Logo = ({ variant }: { variant?: 'default' | 'login' } = {}) => {
   // <svg
@@ -263,7 +263,7 @@ const Logo = ({ variant }: { variant?: 'default' | 'login' } = {}) => {
     return <img src={url} alt="Logo" style={imgStyle} />;
   }
 
-  // Fallback — встроенный SVG "FARA"
+  // Fallback — встроенный SVG "BuildCRM"
   return (
     <svg
       width="300"
@@ -311,9 +311,9 @@ const Logo = ({ variant }: { variant?: 'default' | 'login' } = {}) => {
           textAnchor="middle"
           fontWeight="900"
           fontFamily="'Arial Black', 'Helvetica Neue', Arial, sans-serif"
-          fontSize="62px"
+          fontSize="42px"
           fill="url(#editing-gradow-gradient)">
-          FARA
+          BuildCRM
         </text>
       </g>
     </svg>

@@ -17,6 +17,6 @@
         </filter>
     </defs>
     <g filter="url(#editing-gradow-filter)">
-        <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-weight="100" font-family="Arial Black, sans-serif" font-size="62px" fill="url(#editing-gradow-gradient)">FARA</text>
+        <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-weight="100" font-family="Arial Black, sans-serif" font-size="42px" fill="url(#editing-gradow-gradient)">BuildCRM</text>
     </g>
 </svg>
