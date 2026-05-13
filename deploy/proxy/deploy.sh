@@ -43,7 +43,7 @@ set +a
 # Валидация обязательных переменных
 : "${DOMAIN:?DOMAIN не задан в .env}"
 : "${EMAIL:?EMAIL не задан в .env}"
-: "${FARA_NETWORK:?FARA_NETWORK не задан в .env}"
+: "${CRM_NETWORK:?CRM_NETWORK не задан в .env}"
 
 STAGING="${STAGING:-0}"
 
@@ -57,11 +57,11 @@ if [ -n "$WWW_DOMAIN" ]; then
 fi
 
 echo "→ Конфигурация:"
-echo "    DOMAIN       = $DOMAIN"
-echo "    WWW_DOMAIN   = ${WWW_DOMAIN:-(пусто)}"
-echo "    EMAIL        = $EMAIL"
-echo "    FARA_NETWORK = $FARA_NETWORK"
-echo "    STAGING      = $STAGING"
+echo "    DOMAIN      = $DOMAIN"
+echo "    WWW_DOMAIN  = ${WWW_DOMAIN:-(пусто)}"
+echo "    EMAIL       = $EMAIL"
+echo "    CRM_NETWORK = $CRM_NETWORK"
+echo "    STAGING     = $STAGING"
 
 # Предупреждение про кириллический домен
 if echo "$DOMAIN" | grep -qP '[^\x00-\x7F]'; then
@@ -72,25 +72,25 @@ if echo "$DOMAIN" | grep -qP '[^\x00-\x7F]'; then
   exit 1
 fi
 
-# ─── 2. Проверяем сеть FARA ────────────────────────────────────
-if ! docker network ls --format '{{.Name}}' | grep -q "^${FARA_NETWORK}$"; then
+# ─── 2. Проверяем сеть CRM ────────────────────────────────────
+if ! docker network ls --format '{{.Name}}' | grep -q "^${CRM_NETWORK}$"; then
   echo
-  echo "✗ Сеть ${FARA_NETWORK} не найдена. Сначала подними композ FARA:"
+  echo "✗ Сеть ${CRM_NETWORK} не найдена. Сначала подними BuildCRM:"
   echo "    cd ../.. && docker compose up -d"
   echo
-  echo "  Если папка проекта называется не 'faracrm' — поправь FARA_NETWORK"
+  echo "  Если папка проекта называется иначе — поправь CRM_NETWORK"
   echo "  в .env и networks.crm.name в docker-compose.yml."
   exit 1
 fi
 
-# Compose автоматически читает .env из этой папки и подставит ${FARA_NETWORK}
+# Compose автоматически читает .env из этой папки и подставит ${CRM_NETWORK}
 # в docker-compose.yml. Генерировать override.yml не нужно.
 
 # ─── 3. Готовим bootstrap-конфиг (только HTTP, без ssl_certificate) ──
 echo "→ Готовлю временный nginx-конфиг (только HTTP)…"
 mkdir -p ./nginx/conf.d ./certbot/conf ./certbot/www
 
-cat > ./nginx/conf.d/fara.conf <<EOF
+cat > ./nginx/conf.d/buildcrm.conf <<EOF
 server {
     listen 80;
     server_name $SERVER_NAMES;
@@ -148,7 +148,7 @@ docker run --rm \
   --entrypoint sh \
   nginx:alpine \
   -c 'envsubst "\${DOMAIN} \${SERVER_NAMES}" < /templates/fara.conf.template' \
-  > ./nginx/conf.d/fara.conf
+  > ./nginx/conf.d/buildcrm.conf
 
 # ─── 7. Перезапускаем nginx и поднимаем certbot ────────────────
 docker compose exec nginx-proxy nginx -s reload

@@ -1,4 +1,4 @@
-"""FARA CRM — FastAPI application entry point."""
+"""BuildCRM — FastAPI application entry point."""
 
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request

@@ -28,7 +28,7 @@
     "enable_two_way_cron": "Двусторонняя синхронизация",
     "enable_routes_cron": "Синхронизация маршрутов",
     "file_missing_cloud": "Нет в облаке",
-    "file_missing_local": "Нет в FARA",
+    "file_missing_local": "Нет в BuildCRM",
     "need_sync_root_name": "Требуется синхронизация имени",
     "checksum": "Контрольная сумма",
     "public": "Публичный",

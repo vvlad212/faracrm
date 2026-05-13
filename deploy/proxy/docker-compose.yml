@@ -3,7 +3,7 @@ services:
   # ─── Reverse Proxy ─────────────────────────────────────
   nginx-proxy:
     image: nginx:alpine
-    container_name: fara-proxy
+    container_name: buildcrm-proxy
     restart: unless-stopped
     ports:
       - "80:80"
@@ -23,7 +23,7 @@ services:
   # ─── Certbot (SSL renew loop) ─────────────────────────
   certbot:
     image: certbot/certbot
-    container_name: fara-certbot
+    container_name: buildcrm-certbot
     restart: unless-stopped
     volumes:
       - ./certbot/conf:/etc/letsencrypt
@@ -34,7 +34,7 @@ networks:
   proxy:
     driver: bridge
   crm:
-    # Имя сети берётся из .env (переменная FARA_NETWORK).
+    # Имя сети берётся из .env (переменная CRM_NETWORK).
     # Compose автоматически читает .env из этой папки.
     external: true
-    name: ${FARA_NETWORK}
+    name: ${CRM_NETWORK}

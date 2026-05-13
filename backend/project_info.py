@@ -1,4 +1,4 @@
-"""FARA CRM project metadata."""
+"""BuildCRM project metadata."""
 
 VERSION = "1.0.341"
 
@@ -6,11 +6,9 @@ VERSION = "1.0.341"
 DESCRIPTION = """
 
 <div>
-FARA CRM API helps you business work easy🚀
+BuildCRM API helps you business work easy🚀
 
-Readme and source code [Github](https://github.com/shurshilov/faracrm)
-
-Visit our website [Production website](https://faracrm.com)
+Readme and source code [Github](https://github.com/vvlad212/faracrm)
 </div>
 <img src="/static/logo.svg" alt="drawing" width="100%"/>
 """
@@ -19,7 +17,7 @@ Visit our website [Production website](https://faracrm.com)
 TAGS_METADATA = []
 
 
-TITLE = f"FARA CRM {VERSION}"
+TITLE = f"BuildCRM {VERSION}"
 
 
 TIMEZONE = "Europe/Moscow"

@@ -28,7 +28,7 @@
     "enable_two_way_cron": "Two-way Sync",
     "enable_routes_cron": "Routes Sync",
     "file_missing_cloud": "Missing in Cloud",
-    "file_missing_local": "Missing in FARA",
+    "file_missing_local": "Missing in BuildCRM",
     "need_sync_root_name": "Needs Name Sync",
     "checksum": "Checksum",
     "public": "Public",

@@ -1,16 +1,16 @@
 <div align="center">
-  <img src="docs/dist/assets/logo-mark.svg" alt="FARA CRM" width="96" height="96" />
+  <img src="docs/dist/assets/logo-mark.svg" alt="BuildCRM" width="96" height="96" />
 
   [English](README.md) · [Русский](README.ru.md)
 </div>
 
-# FARA CRM
+# BuildCRM
 
 **Модульная CRM-система на FastAPI + React с кастомным ORM (DotORM), real-time чатом через WebSocket и интеграцией с внешними мессенджерами.**
 
-**Официальный сайт:** [faracrm.com](https://faracrm.com)
-**Демо версия:** [demo.faracrm.com](https://demo.faracrm.com)
-📖 **Полная документация:** [docs.faracrm.com](https://docs.faracrm.com)
+**Официальный сайт:** [buildcrm.com](https://buildcrm.com)
+**Демо версия:** [demo.buildcrm.com](https://demo.buildcrm.com)
+📖 **Полная документация:** [docs.buildcrm.com](https://docs.buildcrm.com)
 
 ---
 
@@ -57,7 +57,7 @@ yarn dev
 ## Структура проекта
 
 ```
-fara/
+buildcrm/
 ├── backend/
 │   ├── main.py                  # FastAPI entry point
 │   ├── main_cron.py             # Cron-задачи
@@ -81,7 +81,7 @@ fara/
 │   └── src/
 │       ├── services/api/        # RTK Query API
 │       ├── store/               # Redux store
-│       ├── fara_chat/           # Модуль чата
+│       ├── chat/           # Модуль чата
 │       └── ...
 ├── tests/
 ├── docs/                        # MkDocs документация
@@ -100,8 +100,8 @@ fara/
 
 ## Демо
 
-🌐 [demo.faracrm.com](https://demo.faracrm.com)
+🌐 [demo.buildcrm.com](https://demo.buildcrm.com)
 
 ## Лицензия
 
-FARA CRM License v1.0
+BuildCRM License v1.0

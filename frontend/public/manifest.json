@@ -1,7 +1,7 @@
 {
-  "name": "FARA CRM",
-  "short_name": "FARA",
-  "description": "FARA CRM - Customer Relationship Management",
+  "name": "BuildCRM",
+  "short_name": "BuildCRM",
+  "description": "BuildCRM — CRM для строительных компаний",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
