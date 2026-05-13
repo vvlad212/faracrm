@@ -2,7 +2,7 @@ import { Form } from '@/components/Form/Form';
 import { Field } from '@/components/List/Field';
 import { ViewFormProps } from '@/route/type';
 import { FormSection, FormRow } from '@/components/Form/Layout';
-import { IconTemplate, IconList } from '@tabler/icons-react';
+import { IconTemplate } from '@tabler/icons-react';
 import type { FaraRecord } from '@/services/api/crudTypes';
 
 export function ViewFormProjectTemplate(props: ViewFormProps) {
@@ -31,7 +31,6 @@ export function ViewFormProjectTemplate(props: ViewFormProps) {
         <Field name="quantity" label="Количество" />
         <Field name="sequence" label="Порядок" />
       </Field>
-
     </Form>
   );
 }

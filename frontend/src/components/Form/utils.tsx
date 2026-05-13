@@ -196,7 +196,13 @@ export const prepareValuesToSave = (
        */
       // если many2one задан, но задан как обьект(модель) а не число
       // то преобразовать в число (ид)
-      if (values[field.name] && typeof values[field.name] !== 'number') {
+      // "VirtualId" — строковый маркер для FK на ещё не созданного родителя,
+      // бэкенд заменит его на реальный id при _update_relations
+      if (
+        values[field.name] &&
+        typeof values[field.name] !== 'number' &&
+        values[field.name] !== 'VirtualId'
+      ) {
         values[field.name] = values[field.name].id;
       }
     } else if (

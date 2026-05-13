@@ -77,9 +77,13 @@ class Lead(AuditMixin, PolymorphicParentMixin):
     async def update(self, payload, fields=None, session=None):
         """
         Override — логируем смену стадии как Activity.
+        При переходе в стадию «Договор» замораживаем цены расчётов.
+        При уходе из «Договор» — размораживаем.
         """
         new_stage = getattr(payload, "stage_id", None)
         old_stage_id = None
+        old_stage_name = None
+        new_stage_name = None
 
         # Проверяем, меняется ли stage_id
         if new_stage is not None and hasattr(new_stage, "id"):
@@ -98,16 +102,35 @@ class Lead(AuditMixin, PolymorphicParentMixin):
             payload, fields=fields, session=session
         )
 
-        # Логируем смену стадии после успешного обновления
+        # Логируем смену стадии и обрабатываем заморозку
         if (
             old_stage_id
             and new_stage is not None
             and hasattr(new_stage, "id")
             and old_stage_id != new_stage.id
         ):
+            # Получаем названия стадий для логирования и проверки
+            old_stages = await env.models.lead_stage.search(
+                filter=[("id", "=", old_stage_id)],
+                fields=["name"],
+                limit=1,
+            )
+            new_stages = await env.models.lead_stage.search(
+                filter=[("id", "=", new_stage.id)],
+                fields=["name"],
+                limit=1,
+            )
+            old_stage_name = (
+                old_stages[0].name if old_stages else None
+            )
+            new_stage_name = (
+                new_stages[0].name if new_stages else None
+            )
+
             try:
-                await self._log_stage_change(
-                    old_stage_id, new_stage.id
+                await self._log_stage_change_by_name(
+                    old_stage_name or str(old_stage_id),
+                    new_stage_name or str(new_stage.id),
                 )
             except Exception as e:
                 logger.warning(
@@ -116,28 +139,126 @@ class Lead(AuditMixin, PolymorphicParentMixin):
                     e,
                 )
 
+            # Заморозка/разморозка цен
+            try:
+                await self._handle_freeze(
+                    old_stage_name, new_stage_name
+                )
+            except Exception as e:
+                logger.warning(
+                    "Failed to handle price freeze for lead %s: %s",
+                    self.id,
+                    e,
+                )
+
         return result
 
-    async def _log_stage_change(
-        self, old_stage_id: int, new_stage_id: int
+    async def _handle_freeze(
+        self, old_stage_name: str | None, new_stage_name: str | None
+    ):
+        """Замораживает/размораживает цены при смене стадии."""
+        FREEZE_STAGE = "Договор"
+
+        entering_freeze = (
+            new_stage_name == FREEZE_STAGE
+            and old_stage_name != FREEZE_STAGE
+        )
+        leaving_freeze = (
+            old_stage_name == FREEZE_STAGE
+            and new_stage_name != FREEZE_STAGE
+        )
+
+        if not entering_freeze and not leaving_freeze:
+            return
+
+        # Обновляем is_frozen на лиде
+        session = self.__class__._get_db_session(session=None)
+        await session.execute(
+            'UPDATE "leads" SET is_frozen = $1 WHERE id = $2',
+            [entering_freeze, self.id],
+            cursor="void",
+        )
+
+        if entering_freeze:
+            # Обновляем цены из актуальных компонентов и замораживаем
+            await self._freeze_estimate_prices()
+            logger.info("Froze prices for lead %s", self.id)
+        else:
+            logger.info("Unfroze prices for lead %s", self.id)
+
+    async def _freeze_estimate_prices(self):
+        """Обновляет цены в расчётах из текущих цен компонентов при заморозке."""
+        Estimate = env.models.estimate
+        EstimateLine = env.models.estimate_line
+
+        estimates = await Estimate.search(
+            filter=[("lead_id", "=", self.id)],
+            fields=["id"],
+            limit=10000,
+        )
+        if not estimates:
+            return
+
+        estimate_ids = [e.id for e in estimates]
+        lines = await EstimateLine.search(
+            filter=[
+                ("estimate_id", "in", estimate_ids),
+                ("is_manual", "=", False),
+            ],
+            fields=["id", "component_id"],
+            limit=10000,
+        )
+        if not lines:
+            return
+
+        # Собираем уникальные component_id
+        comp_ids = set()
+        for line in lines:
+            cid = (
+                line.component_id.id
+                if hasattr(line.component_id, "id")
+                else line.component_id
+            )
+            if cid:
+                comp_ids.add(cid)
+
+        if not comp_ids:
+            return
+
+        # Загружаем актуальные цены компонентов
+        components = await env.models.component.search(
+            filter=[("id", "in", list(comp_ids))],
+            fields=["id", "cost_price", "list_price"],
+            limit=10000,
+        )
+        comp_prices = {
+            c.id: (c.cost_price, c.list_price) for c in components
+        }
+
+        # Обновляем цены в каждой строке
+        session = self.__class__._get_db_session(session=None)
+        for line in lines:
+            cid = (
+                line.component_id.id
+                if hasattr(line.component_id, "id")
+                else line.component_id
+            )
+            if cid and cid in comp_prices:
+                cost, sale = comp_prices[cid]
+                await session.execute(
+                    'UPDATE "estimate_line" '
+                    "SET cost_price = $1, sale_price = $2 "
+                    "WHERE id = $3",
+                    [cost, sale, line.id],
+                    cursor="void",
+                )
+
+    async def _log_stage_change_by_name(
+        self, old_name: str, new_name: str
     ):
         """Создаёт Activity-запись о смене стадии."""
         Activity = env.models.activity
         ActivityType = env.models.activity_type
-
-        # Получаем названия стадий
-        old_stages = await env.models.lead_stage.search(
-            filter=[("id", "=", old_stage_id)],
-            fields=["name"],
-            limit=1,
-        )
-        new_stages = await env.models.lead_stage.search(
-            filter=[("id", "=", new_stage_id)],
-            fields=["name"],
-            limit=1,
-        )
-        old_name = old_stages[0].name if old_stages else str(old_stage_id)
-        new_name = new_stages[0].name if new_stages else str(new_stage_id)
 
         # Ищем тип "Смена стадии"
         system_types = await ActivityType.search(

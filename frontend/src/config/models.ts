@@ -126,6 +126,8 @@ export const modelsConfig: Record<string, ModelConfig> = {
   },
   project_template_line: {
     fields: ['id', 'template_id', 'component_id', 'quantity', 'sequence'],
+    form: () =>
+      import('@/fara_project_templates/FormLine').then(m => ({ default: m.ViewFormProjectTemplateLine })),
   },
 
   // === Estimates (Расчёты) ===
