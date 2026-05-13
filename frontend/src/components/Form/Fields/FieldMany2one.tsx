@@ -1,4 +1,4 @@
-import { Combobox, InputBase, useCombobox } from '@mantine/core';
+import { Combobox, InputBase, useCombobox, CloseButton } from '@mantine/core';
 import { ReactElement, useContext, useEffect, useState, useMemo } from 'react';
 import { IconChevronDown } from '@tabler/icons-react';
 import {
@@ -158,18 +158,34 @@ export const FieldMany2one = <RecordType extends FaraRecord>({
                 type="button"
                 pointer
                 rightSection={
-                  <IconChevronDown
-                    size={16}
-                    style={{
-                      opacity: 0.4,
-                      transition: 'transform 150ms ease',
-                      transform: combobox.dropdownOpened
-                        ? 'rotate(180deg)'
-                        : 'rotate(0deg)',
-                    }}
-                  />
+                  form.getValues()[name] && !required ? (
+                    <CloseButton
+                      size="sm"
+                      onMouseDown={e => e.preventDefault()}
+                      onClick={e => {
+                        e.stopPropagation();
+                        if (onchangeFields?.includes(name) && handleFieldChange) {
+                          handleFieldChange(name, null);
+                        } else {
+                          form.setValues({ [name]: null });
+                        }
+                      }}
+                      aria-label="Очистить"
+                    />
+                  ) : (
+                    <IconChevronDown
+                      size={16}
+                      style={{
+                        opacity: 0.4,
+                        transition: 'transform 150ms ease',
+                        transform: combobox.dropdownOpened
+                          ? 'rotate(180deg)'
+                          : 'rotate(0deg)',
+                      }}
+                    />
+                  )
                 }
-                rightSectionPointerEvents="none"
+                rightSectionPointerEvents={form.getValues()[name] && !required ? 'all' : 'none'}
                 onClick={() => {
                   combobox.openDropdown();
                 }}

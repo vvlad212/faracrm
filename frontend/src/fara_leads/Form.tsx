@@ -13,48 +13,66 @@ import {
   IconTag,
   IconProgress,
   IconPalette,
+  IconCalculator,
 } from '@tabler/icons-react';
+import { useParams, useLocation } from 'react-router-dom';
+import { LeadStepper } from './LeadStepper';
+import { LeadTimeline } from './LeadTimeline';
 
 /**
  * Форма лида/возможности
  */
 export function ViewFormLeads(props: ViewFormProps) {
+  const { id } = useParams<{ id: string }>();
+  const { pathname } = useLocation();
+  const isCreate = props.isCreateForm || !id || pathname.includes('/create');
+
   return (
-    <Form<LeadRecord> model="leads" {...props}>
+    <Form<LeadRecord>
+      model="leads"
+      {...props}
+      header={!isCreate ? <LeadStepper /> : undefined}
+      footer={!isCreate ? <LeadTimeline /> : undefined}
+    >
       {/* Основная информация */}
-      <FormSection title="Основная информация" icon={<IconUser size={18} />}>
+      <FormSection title="Клиент" icon={<IconUser size={18} />}>
         <FormRow cols={2}>
-          <Field name="name" label="Название" />
-          <Field name="type" label="Тип" />
+          <Field name="name" label="Имя" />
+          <Field name="phone" label="Телефон" />
         </FormRow>
         <FormRow cols={2}>
-          <Field name="stage_id" label="Стадия" />
-          <Field name="active" label="Активен" />
+          <Field name="source" label="Источник" />
+          <Field name="stage_id" label="Стадия" hidden={!isCreate} />
+          {!isCreate && <Field name="user_id" label="Ответственный" />}
         </FormRow>
       </FormSection>
 
-      {/* Связи */}
-      <FormSection title="Связи" icon={<IconBuilding size={18} />}>
-        <FormRow cols={2}>
-          <Field name="parent_id" label="Партнёр" />
-          <Field name="company_id" label="Компания" />
-        </FormRow>
-        <Field name="user_id" label="Ответственный" />
+      {/* Участок */}
+      <FormSection title="Участок" icon={<IconBuilding size={18} />}>
+        <Field name="address" label="Адрес участка" />
       </FormSection>
 
-      {/* Контакты */}
-      <Field
-        name="contact_ids"
-        widget="contacts"
-        label="Контакты"
-        parentField="partner_id">
-        <Field name="contact_type_id" />
-        <Field name="name" />
-        <Field name="is_primary" />
-      </Field>
+      {/* Расчёты */}
+      {!isCreate && (
+        <Field
+          name="estimate_ids"
+          label="Расчёты"
+          displayField="name"
+          showCreate={true}
+          showSelect={false}
+          inline_create={false}
+          inline_update={false}
+        >
+          <Field name="id" label="ID" />
+          <Field name="name" label="Номер" />
+          <Field name="status" label="Статус" />
+          <Field name="source_template_id" label="Шаблон" />
+          <Field name="date_created" label="Дата" />
+        </Field>
+      )}
 
       {/* Заметки */}
-      <FormSection title="Дополнительно" icon={<IconTag size={18} />}>
+      <FormSection title="Заметки" icon={<IconTag size={18} />}>
         <Field name="notes" label="Заметки" />
       </FormSection>
     </Form>

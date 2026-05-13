@@ -11,33 +11,22 @@ import type {
 import { useTranslation } from 'react-i18next';
 
 export function ViewListLeads() {
-  const { t } = useTranslation('leads');
   return (
     <List<LeadRecord> model="leads" order="desc" sort="id">
-      <Field name="id" label={t('leads.id')} />
-      <Field name="name" label={t('leads.name')} />
-      <Field name="type" label={t('leads.type')} />
-      <Field
-        name="user_id"
-        label={t('leads.user_id')}
-        render={value => <RelationCell value={value} model="users" />}
-      />
-      <Field
-        name="parent_id"
-        label={t('leads.parent_id')}
-        render={value => <RelationCell value={value} model="partners" />}
-      />
-      <Field
-        name="company_id"
-        label={t('leads.company_id')}
-        render={value => <RelationCell value={value} model="company" />}
-      />
+      <Field name="id" label="ID" />
+      <Field name="name" label="Имя" />
+      <Field name="phone" label="Телефон" />
+      <Field name="source" label="Источник" />
       <Field
         name="stage_id"
-        label={t('leads.stage_id')}
-        render={value => <RelationCell value={value} model="stages" />}
+        label="Стадия"
+        render={value => <RelationCell value={value} model="lead_stage" />}
       />
-      <Field name="active" label={t('leads.active')} />
+      <Field
+        name="user_id"
+        label="Ответственный"
+        render={value => <RelationCell value={value} model="users" />}
+      />
     </List>
   );
 }

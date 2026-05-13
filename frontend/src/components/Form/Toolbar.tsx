@@ -24,6 +24,7 @@ export const Toolbar = <RecordType extends FaraRecord>({
   actions,
   activePanel,
   onTogglePanel,
+  afterCreate,
 }: {
   model: string;
   id?: string;
@@ -37,6 +38,7 @@ export const Toolbar = <RecordType extends FaraRecord>({
   actions?: ReactNode;
   activePanel?: PanelType;
   onTogglePanel?: (panel: PanelType) => void;
+  afterCreate?: (id: number) => Promise<void>;
 }) => {
   const { t } = useTranslation('common');
   const form = useFormContext();
@@ -99,6 +101,7 @@ export const Toolbar = <RecordType extends FaraRecord>({
               modalClose={modalClose}
               parentId={parentId}
               relatedFieldO2M={relatedFieldO2M}
+              afterCreate={afterCreate}
             />
           ) : (
             !!id && (
@@ -128,7 +131,7 @@ export const Toolbar = <RecordType extends FaraRecord>({
 
       <Group gap="xs">
         {/* Полиморфные панели: иконки-бейджи */}
-        {showPanels && (
+        {showPanels && id && !isNaN(Number(id)) && (
           <FormPanelsBadges
             resModel={model}
             resId={Number(id)}

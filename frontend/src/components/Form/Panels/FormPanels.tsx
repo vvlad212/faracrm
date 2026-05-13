@@ -50,6 +50,8 @@ export function FormPanelsBadges({
   // API limit:0 не возвращает пустой data, поэтому запрашиваем
   // COUNT_LIMIT+1 записей и считаем data.length
 
+  const validId = resId && !isNaN(resId) && resId > 0;
+
   const { data: activitiesData } = useSearchQuery({
     model: 'activity',
     fields: ['id'],
@@ -60,15 +62,15 @@ export function FormPanelsBadges({
       ['done', '=', false],
     ],
     limit: COUNT_LIMIT + 1,
-  });
+  }, { skip: !validId });
 
   // chat_message: auto-CRUD отключён (права через ChatMember),
   // поэтому для бейджика используем выделенный эндпоинт,
   // возвращающий только число.
   const { data: messagesData } = useGetRecordMessagesCountQuery({
     resModel,
-    resId,
-  });
+    resId: validId ? resId : 0,
+  }, { skip: !validId });
 
   const { data: attachmentsData } = useSearchQuery({
     model: 'attachments',
@@ -79,7 +81,7 @@ export function FormPanelsBadges({
       ['folder', '=', false],
     ],
     limit: COUNT_LIMIT + 1,
-  });
+  }, { skip: !validId });
 
   const activityCount = activitiesData?.data?.length || 0;
   const messageCount = messagesData?.total || 0;

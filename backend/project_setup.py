@@ -102,6 +102,20 @@ from backend.base.crm.contract.models.company_ext import CompanyContractMixin
 from backend.base.crm.contract.models.partner_ext import PartnerContractMixin
 from backend.base.crm.contract.models.sale_ext import SaleContractMixin
 
+# Components, ProjectTemplates, Estimates
+from backend.base.crm.components.models.component import Component
+from backend.base.crm.components.models.component_category import (
+    ComponentCategory,
+)
+from backend.base.crm.project_templates.models.project_template import (
+    ProjectTemplate,
+)
+from backend.base.crm.project_templates.models.project_template_line import (
+    ProjectTemplateLine,
+)
+from backend.base.crm.estimates.models.estimate import Estimate
+from backend.base.crm.estimates.models.estimate_line import EstimateLine
+
 # когда есть расширение чтобы IDE видела все поля в модели делаем хак
 if TYPE_CHECKING:
     from backend.base.crm.chat.models.chat_connector import (
@@ -190,6 +204,9 @@ from backend.base.crm.tasks.app import TasksApp
 from backend.base.crm.activity.app import ActivityApp
 from backend.base.crm.report_docx.app import ReportDocxApp
 from backend.base.crm.contract.app import ContractApp
+from backend.base.crm.components.app import ComponentsApp
+from backend.base.crm.project_templates.app import ProjectTemplatesApp
+from backend.base.crm.estimates.app import EstimatesApp
 
 # services
 from backend.base.system.logger.app import LoggerService
@@ -278,6 +295,13 @@ class Models(ModelsCore, ExtensibleMixin):
     activity_type = ActivityType
     report_template = ReportTemplate
     contract = Contract
+    # components, templates, estimates
+    component = Component
+    component_category = ComponentCategory
+    project_template = ProjectTemplate
+    project_template_line = ProjectTemplateLine
+    estimate = Estimate
+    estimate_line = EstimateLine
 
 
 class Apps(AppsCore):
@@ -309,6 +333,9 @@ class Apps(AppsCore):
     activity = ActivityApp()
     report_docx = ReportDocxApp()
     contract = ContractApp()
+    components = ComponentsApp()
+    project_templates = ProjectTemplatesApp()
+    estimates = EstimatesApp()
 
     dotorm_crud_auto = DotormCrudAutoService()
     # alise

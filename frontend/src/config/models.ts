@@ -11,6 +11,8 @@ export interface ModelConfig {
   fields?: string[];
   // Модули-расширения формы (загружаются при открытии формы)
   extensions?: (() => Promise<any>)[];
+  // Вид по умолчанию (list или kanban)
+  defaultView?: 'list' | 'kanban';
 }
 
 export const modelsConfig: Record<string, ModelConfig> = {
@@ -53,7 +55,7 @@ export const modelsConfig: Record<string, ModelConfig> = {
 
   // === Contacts (Партнёры) ===
   partners: {
-    menu: MenuGroups.contacts,
+    // menu hidden
     list: () =>
       import('@/fara_partners/List').then(m => ({
         default: m.ViewListPartners,
@@ -68,7 +70,7 @@ export const modelsConfig: Record<string, ModelConfig> = {
       })),
   },
   contact: {
-    menu: MenuGroups.contacts,
+    // menu hidden
     list: () =>
       import('@/fara_partners/ContactViews').then(m => ({
         default: m.ViewListContacts,
@@ -79,7 +81,7 @@ export const modelsConfig: Record<string, ModelConfig> = {
       })),
   },
   contact_type: {
-    menu: MenuGroups.contacts,
+    // menu hidden
     list: () =>
       import('@/fara_partners/ContactTypeList').then(m => ({
         default: m.ViewListContactTypes,
@@ -89,6 +91,7 @@ export const modelsConfig: Record<string, ModelConfig> = {
   // === CRM ===
   leads: {
     menu: MenuGroups.crm,
+    defaultView: 'kanban',
     list: () =>
       import('@/fara_leads/List').then(m => ({ default: m.ViewListLeads })),
     form: () =>
@@ -97,9 +100,49 @@ export const modelsConfig: Record<string, ModelConfig> = {
       import('@/fara_leads/Kanban').then(m => ({ default: m.ViewKanbanLeads })),
   },
 
+  // === Components (Склад) ===
+  component: {
+    menu: MenuGroups.stock,
+    list: () =>
+      import('@/fara_components/List').then(m => ({ default: m.ViewListComponents })),
+    form: () =>
+      import('@/fara_components/Form').then(m => ({ default: m.ViewFormComponent })),
+  },
+  component_category: {
+    menu: MenuGroups.stock,
+    list: () =>
+      import('@/fara_components/List').then(m => ({ default: m.ViewListComponentCategories })),
+    form: () =>
+      import('@/fara_components/Form').then(m => ({ default: m.ViewFormComponentCategory })),
+  },
+
+  // === Project Templates (Типовые проекты) ===
+  project_template: {
+    menu: MenuGroups.templates,
+    list: () =>
+      import('@/fara_project_templates/List').then(m => ({ default: m.ViewListProjectTemplates })),
+    form: () =>
+      import('@/fara_project_templates/Form').then(m => ({ default: m.ViewFormProjectTemplate })),
+  },
+  project_template_line: {
+    fields: ['id', 'template_id', 'component_id', 'quantity', 'sequence'],
+  },
+
+  // === Estimates (Расчёты) ===
+  estimate: {
+    menu: MenuGroups.estimates,
+    list: () =>
+      import('@/fara_estimates/List').then(m => ({ default: m.ViewListEstimates })),
+    form: () =>
+      import('@/fara_estimates/Form').then(m => ({ default: m.ViewFormEstimate })),
+  },
+  estimate_line: {
+    fields: ['id', 'estimate_id', 'name', 'category_name', 'uom_name', 'quantity', 'cost_price', 'sale_price', 'is_included', 'is_manual', 'sequence'],
+  },
+
   // === Activity ===
   activity: {
-    menu: MenuGroups.activity,
+    menu: MenuGroups.settings,
     list: () =>
       import('@/fara_activity/List').then(m => ({
         default: m.ViewListActivity,
@@ -114,7 +157,7 @@ export const modelsConfig: Record<string, ModelConfig> = {
       })),
   },
   activity_type: {
-    menu: MenuGroups.activity,
+    menu: MenuGroups.settings,
     list: () =>
       import('@/fara_activity/List').then(m => ({
         default: m.ViewListActivityType,
@@ -131,7 +174,7 @@ export const modelsConfig: Record<string, ModelConfig> = {
 
   // === Communication ===
   chat_connector: {
-    menu: MenuGroups.communication,
+    // menu hidden
     list: () =>
       import('@/fara_chat/components/ConnectorList').then(m => ({
         default: m.ConnectorList,
@@ -147,7 +190,7 @@ export const modelsConfig: Record<string, ModelConfig> = {
     ],
   },
   chat_external_account: {
-    menu: MenuGroups.communication,
+    // menu hidden
     list: () =>
       import('@/fara_chat/components/ExternalAccountViews').then(m => ({
         default: m.ViewListExternalAccount,
@@ -158,7 +201,7 @@ export const modelsConfig: Record<string, ModelConfig> = {
       })),
   },
   chat_external_chat: {
-    menu: MenuGroups.communication,
+    // menu hidden
     list: () =>
       import('@/fara_chat/components/ExternalChatViews').then(m => ({
         default: m.ViewListExternalChat,
@@ -169,7 +212,7 @@ export const modelsConfig: Record<string, ModelConfig> = {
       })),
   },
   chat_external_message: {
-    menu: MenuGroups.communication,
+    // menu hidden
     list: () =>
       import('@/fara_chat/components/ExternalMessageViews').then(m => ({
         default: m.ViewListExternalMessage,
@@ -204,7 +247,7 @@ export const modelsConfig: Record<string, ModelConfig> = {
 
   // === Sales ===
   sales: {
-    menu: MenuGroups.sales,
+    // menu hidden
     list: () =>
       import('@/fara_sales/List').then(m => ({ default: m.ViewListSales })),
     form: () =>
@@ -213,7 +256,7 @@ export const modelsConfig: Record<string, ModelConfig> = {
       import('@/fara_sales/Kanban').then(m => ({ default: m.ViewKanbanSales })),
   },
   sale_stage: {
-    menu: MenuGroups.sales,
+    // menu hidden
     list: () =>
       import('@/fara_sales/List').then(m => ({ default: m.ViewListSaleStage })),
     form: () =>
@@ -224,7 +267,7 @@ export const modelsConfig: Record<string, ModelConfig> = {
       })),
   },
   tax: {
-    menu: MenuGroups.sales,
+    // menu hidden
     list: () =>
       import('@/fara_sales/List').then(m => ({ default: m.ViewListTax })),
     form: () =>
@@ -241,7 +284,7 @@ export const modelsConfig: Record<string, ModelConfig> = {
 
   // === Contract ===
   contract: {
-    menu: MenuGroups.sales,
+    // menu hidden
     list: () =>
       import('@/fara_contract/List').then(m => ({
         default: m.ViewListContract,
@@ -442,7 +485,7 @@ export const modelsConfig: Record<string, ModelConfig> = {
   },
   // === Projects & Tasks ===
   tasks: {
-    menu: MenuGroups.projects,
+    // menu hidden
     list: () =>
       import('@/fara_tasks/List').then(m => ({ default: m.ViewListTasks })),
     form: () =>
@@ -464,7 +507,7 @@ export const modelsConfig: Record<string, ModelConfig> = {
       })),
   },
   project: {
-    menu: MenuGroups.projects,
+    // menu hidden
     list: () =>
       import('@/fara_tasks/List').then(m => ({
         default: m.ViewListProjects,
@@ -483,7 +526,7 @@ export const modelsConfig: Record<string, ModelConfig> = {
       })),
   },
   task_stage: {
-    menu: MenuGroups.projects,
+    // menu hidden
     list: () =>
       import('@/fara_tasks/List').then(m => ({
         default: m.ViewListTaskStages,
@@ -498,7 +541,7 @@ export const modelsConfig: Record<string, ModelConfig> = {
       })),
   },
   task_tag: {
-    menu: MenuGroups.projects,
+    // menu hidden
     list: () =>
       import('@/fara_tasks/List').then(m => ({
         default: m.ViewListTaskTags,

@@ -67,4 +67,11 @@ INITIAL_ACTIVITY_TYPES = [
         "default_days": 7,
         "sequence": 5,
     },
+    {
+        "name": "Смена стадии",
+        "icon": "IconArrowRight",
+        "color": "#868e96",
+        "default_days": 0,
+        "sequence": 10,
+    },
 ]

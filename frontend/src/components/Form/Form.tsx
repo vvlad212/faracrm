@@ -68,6 +68,9 @@ export const Form = <RecordType extends FaraRecord>({
   labelPosition = 'left',
   labelWidth = 160,
   actions,
+  header,
+  footer,
+  afterCreate,
 }: {
   model: string;
   isCreateForm?: boolean;
@@ -80,6 +83,9 @@ export const Form = <RecordType extends FaraRecord>({
   labelPosition?: LabelPosition;
   labelWidth?: number | string;
   actions?: React.ReactNode;
+  header?: React.ReactNode;
+  footer?: React.ReactNode;
+  afterCreate?: (id: number) => Promise<void>;
 }) => {
   const { pathname } = useLocation();
   const [fieldsServer, setFieldsServer] = useState<
@@ -157,7 +163,7 @@ export const Form = <RecordType extends FaraRecord>({
     {
       ...params,
     },
-    { skip: isCreateForm || !extensionsLoaded },
+    { skip: isCreateForm || !extensionsLoaded || !id },
   ) as TypedUseQueryHookResult<ReadResult<RecordType>, ReadParams, BaseQueryFn>;
 
   const { data: dataDefault } = useReadDefaultValuesQuery(
@@ -298,15 +304,19 @@ export const Form = <RecordType extends FaraRecord>({
                   actions={actions}
                   activePanel={activePanel}
                   onTogglePanel={showPanels ? handleTogglePanel : undefined}
+                  afterCreate={afterCreate}
                 />
+                {header}
                 {!!Object.keys(fieldsServer).length && !!childrenNew.length && (
                   <form>{childrenNew}</form>
                 )}
+                {footer}
               </Box>
 
               {/* Side panel — mobile: bottom Drawer, desktop: inline resizable */}
               {showPanels &&
                 activePanel &&
+                id && !isNaN(Number(id)) &&
                 (isMobile ? (
                   <Drawer
                     opened={!!activePanel}

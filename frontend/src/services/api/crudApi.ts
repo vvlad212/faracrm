@@ -156,7 +156,6 @@ export const crudApi = createApi({
     read: build.query<ReadResult<FaraRecord>, ReadParams>({
       query: queryArg => ({
         url: `${AUTO}/${queryArg.model}/${queryArg.id}`,
-        // params: { fields: queryArg.fields },
         method: 'POST',
         body: {
           fields: queryArg.fields,
@@ -346,6 +345,25 @@ export const crudApi = createApi({
       }),
       providesTags: (result, error, model) => [{ type: 'Fields', id: model }],
     }),
+
+    // Применить типовой проект к расчёту (копировать позиции)
+    applyTemplate: build.mutation<{ ok: boolean }, { estimateId: number }>({
+      query: ({ estimateId }) => ({
+        url: `/estimate/${estimateId}/apply_template`,
+        method: 'POST',
+      }),
+    }),
+
+    // Удалить все позиции расчёта
+    clearEstimateLines: build.mutation<
+      { ok: boolean; deleted: number },
+      { estimateId: number }
+    >({
+      query: ({ estimateId }) => ({
+        url: `/estimate/${estimateId}/clear_lines`,
+        method: 'DELETE',
+      }),
+    }),
   }),
 });
 
@@ -370,4 +388,6 @@ export const {
   useGetOnchangeFieldsQuery,
   useExecuteOnchangeMutation,
   useGetFieldsQuery,
+  useApplyTemplateMutation,
+  useClearEstimateLinesMutation,
 } = crudApi;

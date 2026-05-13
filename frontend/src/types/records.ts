@@ -32,17 +32,14 @@ export interface BaseRecord {
 
 export interface LeadRecord extends BaseRecord {
   name: string;
+  phone: string | null;
+  source: 'avito' | 'vk' | 'site' | 'referral' | 'other';
+  address: string | null;
   active: boolean;
   stage_id: RelationRecord | null;
   user_id: RelationRecord | null;
-  parent_id: RelationRecord | null;
-  company_id: RelationRecord | null;
   notes: string | null;
-  type: 'lead' | 'opportunity';
-  website: string | null;
-  email: string | null;
-  phone: string | null;
-  mobile: string | null;
+  is_frozen: boolean;
 }
 
 export interface LeadStageRecord extends BaseRecord {

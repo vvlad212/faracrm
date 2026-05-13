@@ -8,6 +8,7 @@ export interface RouteModelProps {
   gantt?: ComponentType;
   icon?: ComponentType;
   children?: ReactNode;
+  defaultView?: 'list' | 'kanban';
 }
 
 export interface ViewFormProps {

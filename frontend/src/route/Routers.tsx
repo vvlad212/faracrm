@@ -96,6 +96,7 @@ const ModelRoutes = () => (
         form={FormComponent}
         kanban={KanbanComponent}
         gantt={GanttComponent}
+        defaultView={modelsConfig[modelName]?.defaultView}
       />
     ))}
   </Fara>

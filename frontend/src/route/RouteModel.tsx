@@ -5,12 +5,13 @@ import { RouteModelProps } from './type';
 import LoadingScreen from '@/components/LoadingScreen/LoadingScreen';
 import { ViewWrapper } from '@/components/ViewWrapper';
 
-export const Model = ({ 
-  name, 
-  list: List, 
-  form: Form, 
+export const Model = ({
+  name,
+  list: List,
+  form: Form,
   kanban: Kanban,
   gantt: Gantt,
+  defaultView,
 }: RouteModelProps) => {
   return (
     <Routes>
@@ -49,6 +50,7 @@ export const Model = ({
               ListComponent={List}
               KanbanComponent={Kanban}
               GanttComponent={Gantt}
+              defaultView={defaultView}
             />
           ) : null
         }

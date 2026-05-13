@@ -242,7 +242,7 @@ function ActivityItem({
 
 // ─── Create activity form ─────────────────────────────────────
 
-function CreateActivityForm({
+export function CreateActivityForm({
   resModel,
   resId,
   currentUserId,

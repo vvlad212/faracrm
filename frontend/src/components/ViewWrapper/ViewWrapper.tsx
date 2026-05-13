@@ -8,7 +8,7 @@ import {
 } from 'react';
 import { Group, Loader, Center, ActionIcon, Tooltip, Box } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
-import { IconSearch } from '@tabler/icons-react';
+import { IconSearch, IconPlus } from '@tabler/icons-react';
 import { ViewSwitcher, ViewType } from '@/components/ViewSwitcher';
 import {
   SearchFilter,
@@ -29,6 +29,8 @@ interface ViewWrapperProps {
   presetFilters?: PresetFilter[];
   /** Скрыть поиск (например для чатов) */
   hideSearch?: boolean;
+  /** Вид по умолчанию (если нет сохранённого в localStorage) */
+  defaultView?: 'list' | 'kanban';
 }
 
 export function ViewWrapper({
@@ -38,6 +40,7 @@ export function ViewWrapper({
   GanttComponent,
   presetFilters = [],
   hideSearch = false,
+  defaultView,
 }: ViewWrapperProps) {
   const navigate = useNavigate();
 
@@ -129,7 +132,7 @@ export function ViewWrapper({
     ) {
       return saved as ViewType;
     }
-    return 'list';
+    return defaultView || 'list';
   });
 
   // Lazy-запрос первой записи — используется только при переключении на form view
@@ -226,8 +229,18 @@ export function ViewWrapper({
               )}
             </Box>
 
-            {/* Правая часть - иконка поиска + ViewSwitcher */}
+            {/* Правая часть - создать + поиск + ViewSwitcher */}
             <Group gap="xs" wrap="nowrap" style={{ flexShrink: 0 }}>
+              <Tooltip label="Создать">
+                <ActionIcon
+                  variant="filled"
+                  color="blue"
+                  size="md"
+                  onClick={() => navigate('create')}>
+                  <IconPlus size={18} />
+                </ActionIcon>
+              </Tooltip>
+
               {!hideSearch && (
                 <Tooltip label={isSearchOpen ? 'Закрыть поиск' : 'Поиск'}>
                   <ActionIcon

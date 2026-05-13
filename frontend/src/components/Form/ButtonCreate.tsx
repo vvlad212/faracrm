@@ -55,6 +55,7 @@ export function ButtonCreate({
   parentId,
   relatedFieldO2M,
   modalClose,
+  afterCreate,
 }: {
   model: string;
   parentFieldName?: string;
@@ -62,6 +63,7 @@ export function ButtonCreate({
   parentId?: number;
   relatedFieldO2M?: string;
   modalClose?: () => void;
+  afterCreate?: (id: number) => Promise<void>;
 }) {
   const { fields: fieldsServer } = useContext(FormFieldsContext);
   const { t } = useTranslation('common');
@@ -184,6 +186,11 @@ export function ButtonCreate({
                   values: { ...item, [relatedField]: data.id },
                 });
               }
+            }
+
+            // Хук после создания (например, копирование шаблона)
+            if (afterCreate) {
+              await afterCreate(data.id);
             }
 
             form.reset();
